@@ -33,7 +33,7 @@
     /* --- STICKY TOP SECTION --- */
     .sticky-top {
       flex-shrink: 0;
-      padding: 15px;
+      padding: 20px 15px 10px 15px;
       background: var(--bg-black);
       z-index: 10;
       border-bottom: 1px solid #1a1a1a;
@@ -41,41 +41,12 @@
     }
 
     .player-header { 
-      margin-bottom: 12px; 
+      margin-bottom: 15px; 
       line-height: 1.1;
     }
     
     .line-1 { font-size: 24px; letter-spacing: 4px; display: block; }
     .line-2 { font-size: 11px; letter-spacing: 1.8px; color: var(--neon-pink); display: block; margin-top: 4px; opacity: 0.9; }
-
-    /* --- EXPAND BUTTON --- */
-    .cta-container {
-      margin-bottom: 15px;
-    }
-
-    .expand-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      border: 1px solid var(--neon-pink);
-      color: var(--neon-pink);
-      padding: 10px 18px;
-      text-decoration: none;
-      font-size: 10px;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      border-radius: 4px;
-      background: rgba(222, 112, 161, 0.1);
-      transition: all 0.3s ease;
-      box-shadow: 0 0 10px rgba(222, 112, 161, 0.2);
-    }
-
-    .expand-btn:hover {
-      background: var(--neon-pink);
-      color: #fff;
-      box-shadow: 0 0 20px var(--neon-pink);
-    }
 
     audio {
       width: 100%;
@@ -94,7 +65,7 @@
       background: transparent;
       border: 1px solid var(--neon-cyan);
       color: var(--neon-cyan);
-      padding: 10px 0;
+      padding: 12px 0;
       font-family: 'Russo One', sans-serif;
       cursor: pointer;
       text-transform: uppercase;
@@ -143,12 +114,6 @@
       <span class="line-2">AGI ORIGINALS VOLUME 1</span>
     </div>
 
-    <div class="cta-container">
-      <a href="https://waseemshaik26.github.io/Sahir-Qawi-Music/" target="_blank" class="expand-btn">
-        📱 Mobile Users: Tap to Expand for Best Experience 🖱️
-      </a>
-    </div>
-
     <audio id="main-audio" controls controlsList="nodownload"></audio>
 
     <div class="controls-grid">
@@ -162,7 +127,7 @@
   <div class="playlist-area" id="playlist-container"></div>
 
 <script>
-  // Volume 1 Tracks EXACTLY as named in your repository screenshot
+  // Volume 1 Tracks mapped from your repository
   const tracks = [
     { url: 'https://raw.githubusercontent.com/WaseemShaik26/Sahir-Qawi-Music/main/01_Sahir%20Qawi%20Intro%20theme.mp3', title: '01. SAHIR QAWI INTRO' },
     { url: 'https://raw.githubusercontent.com/WaseemShaik26/Sahir-Qawi-Music/main/02_Altered%20states%20of%20Consiousness%20.mp3', title: '02. ALTERED STATES' },
