@@ -94,7 +94,7 @@
       background: transparent;
       border: 1px solid var(--neon-cyan);
       color: var(--neon-cyan);
-      padding: 12px 0;
+      padding: 10px 0;
       font-family: 'Russo One', sans-serif;
       cursor: pointer;
       text-transform: uppercase;
@@ -162,7 +162,7 @@
   <div class="playlist-area" id="playlist-container"></div>
 
 <script>
-  // Volume 1 Tracks mapped from repository
+  // Volume 1 Tracks EXACTLY as named in your repository screenshot
   const tracks = [
     { url: 'https://raw.githubusercontent.com/WaseemShaik26/Sahir-Qawi-Music/main/01_Sahir%20Qawi%20Intro%20theme.mp3', title: '01. SAHIR QAWI INTRO' },
     { url: 'https://raw.githubusercontent.com/WaseemShaik26/Sahir-Qawi-Music/main/02_Altered%20states%20of%20Consiousness%20.mp3', title: '02. ALTERED STATES' },
@@ -182,24 +182,6 @@
   const playlistDiv = document.getElementById('playlist-container');
   const loopBtn = document.getElementById('loop-btn');
 
-  function formatTime(seconds) {
-    if (isNaN(seconds)) return "--:--";
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return mins + ":" + (secs < 10 ? '0' : '') + secs;
-  }
-
-  function loadDurations() {
-    tracks.forEach((track, index) => {
-      const tempAudio = new Audio();
-      tempAudio.src = track.url;
-      tempAudio.addEventListener('loadedmetadata', () => {
-        track.duration = formatTime(tempAudio.duration);
-        buildPlaylist();
-      });
-    });
-  }
-
   function buildPlaylist() {
     playlistDiv.innerHTML = '';
     tracks.forEach((track, index) => {
@@ -207,7 +189,7 @@
       trackEl.className = 'track' + (index === currentTrackIndex ? ' active' : '');
       trackEl.innerHTML = `
         <span>${track.title}</span>
-        <span class="duration-tag">${index === currentTrackIndex ? 'PLAYING' : (track.duration || '...')}</span>
+        <span class="duration-tag">${index === currentTrackIndex ? 'PLAYING' : ''}</span>
       `;
       trackEl.onclick = () => playTrack(index);
       playlistDiv.appendChild(trackEl);
@@ -215,12 +197,8 @@
   }
 
   function masterPlay() {
-    if (currentTrackIndex === -1) {
-      playTrack(0);
-    } else {
-      if (audio.paused) audio.play();
-      else audio.pause();
-    }
+    if (currentTrackIndex === -1) playTrack(0);
+    else audio.paused ? audio.play() : audio.pause();
   }
 
   function playTrack(index) {
@@ -231,33 +209,13 @@
     buildPlaylist();
   }
 
-  function nextTrack() {
-    let nextIndex = (currentTrackIndex + 1) % tracks.length;
-    playTrack(nextIndex);
-  }
+  function nextTrack() { playTrack((currentTrackIndex + 1) % tracks.length); }
+  function prevTrack() { playTrack((currentTrackIndex - 1 + tracks.length) % tracks.length); }
+  function toggleLoop() { isLooping = !isLooping; loopBtn.classList.toggle('loop-active', isLooping); }
 
-  function prevTrack() {
-    let prevIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
-    playTrack(prevIndex);
-  }
-
-  function toggleLoop() {
-    isLooping = !isLooping;
-    loopBtn.classList.toggle('loop-active', isLooping);
-  }
-
-  audio.onended = () => {
-    if (isLooping) {
-      audio.currentTime = 0;
-      audio.play();
-    } else {
-      nextTrack();
-    }
-  };
+  audio.onended = () => isLooping ? (audio.currentTime = 0, audio.play()) : nextTrack();
 
   buildPlaylist();
-  loadDurations();
 </script>
-
 </body>
 </html>
