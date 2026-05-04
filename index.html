@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SAHIR QAWI - AGI ORIGINALS VOLUME 1</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Russo+One&display=swap');
+
+    :root {
+      --neon-cyan: #00FFFF;
+      --neon-pink: #DE70A1;
+      --bg-black: #080808;
+    }
+
+    body { 
+      background-color: var(--bg-black); 
+      margin: 0 auto; 
+      padding: 15px; 
+      font-family: 'Russo One', sans-serif;
+      color: var(--neon-cyan);
+      max-width: 450px; 
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    /* --- HEADER (Balanced Typography) --- */
+    .player-header { 
+      text-align: center; 
+      margin-bottom: 20px; 
+      flex-shrink: 0;
+      line-height: 1.1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .line-1 {
+      font-size: 28px;
+      letter-spacing: 5px;
+      display: block;
+      width: 100%;
+    }
+
+    .line-2 {
+      font-size: 14.5px;
+      letter-spacing: 2.1px;
+      color: var(--neon-pink);
+      display: block;
+      margin-top: 4px;
+      opacity: 0.9;
+      width: 100%;
+    }
+
+    /* --- TOP SECTION --- */
+    .top-controls {
+      flex-shrink: 0;
+      margin-bottom: 20px;
+    }
+
+    audio {
+      width: 100%;
+      height: 35px;
+      margin-bottom: 15px;
+      filter: invert(90%) hue-rotate(180deg) brightness(1.2);
+    }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: 1px solid var(--neon-cyan);
+      color: var(--neon-cyan);
+      padding: 18px 0;
+      font-family: 'Russo One', sans-serif;
+      cursor: pointer;
+      text-transform: uppercase;
+      font-size: 12px;
+      border-radius: 4px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.2s;
+    }
+
+    /* --- ANIMATED PLAY BUTTON --- */
+    .play-btn {
+      background: rgba(0, 255, 255, 0.15);
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    /* CSS Triangle */
+    .play-btn::before {
+      content: "";
+      width: 0;
+      height: 0;
+      border-top: 6px solid transparent;
+      border-bottom: 6px solid transparent;
+      border-left: 10px solid var(--neon-cyan);
+    }
+
+    /* Shine effect */
+    .play-btn::after {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -60%;
+      width: 20%;
+      height: 200%;
+      background: rgba(255, 255, 255, 0.4);
+      transform: rotate(30deg);
+      animation: shine 3s infinite;
+    }
+
+    @keyframes shine {
+      0% { left: -60%; }
+      20% { left: 120%; }
+      100% { left: 120%; }
+    }
+
+    .nav-btn:active { transform: scale(0.95); }
+
+    .loop-active {
+      border-color: var(--neon-pink) !important;
+      color: var(--neon-pink) !important;
+      background: rgba(222, 112, 161, 0.1) !important;
+      box-shadow: 0 0 10px rgba(222, 112, 161, 0.3);
+    }
+
+    /* --- PLAYLIST SECTION --- */
+    .playlist {
+      flex-grow: 1;
+      overflow-y: auto;
+      background: #0c0c0c;
+      border-radius: 8px;
+      border: 1px solid #222;
+    }
+
+    .track {
+      padding: 16px 18px;
+      border-bottom: 1px solid #1a1a1a;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: 0.2s;
+      font-size: 13px;
+    }
+
+    .track:hover { background: rgba(0, 255, 255, 0.05); }
+
+    .track.active { 
+      background: rgba(222, 112, 161, 0.05); 
+      border-left: 4px solid var(--neon-pink);
+      color: var(--neon-pink);
+    }
+
+    .duration-tag { font-size: 10px; opacity: 0.5; }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-thumb { background: var(--neon-pink); }
+  </style>
+</head>
+<body>
+
+  <div class="player-header">
+    <span class="line-1">SAHIR QAWI</span>
+    <span class="line-2">AGI ORIGINALS VOLUME 1</span>
+  </div>
+
+  <div class="top-controls">
+    <audio id="main-audio" controls controlsList="nodownload"></audio>
+
+    <div class="controls-grid">
+      <button class="nav-btn play-btn" onclick="masterPlay()">Play</button>
+      <button id="loop-btn" class="nav-btn" onclick="toggleLoop()">Loop</button>
+      <button class="nav-btn" onclick="prevTrack()">« Prev</button>
+      <button class="nav-btn" onclick="nextTrack()">Next »</button>
+    </div>
+  </div>
+
+  <div class="playlist" id="playlist-container"></div>
+
+<script>
+  // Volume 1 Tracks
+  const tracks = [
+    { url: 'https://raw.githubusercontent.com/WaseemShaik26/Sahir-Qawi-Music/main/01_Sahir%20Qawi%20Intro%20theme.mp3', title: '01. SAHIR QAWI INTRO' },
+    { url: 'https://raw.githubusercontent.com/WaseemShaik26/Sahir-Qawi-Music/main/02_Altered%20states%20of%20Consiousness%20.mp3', title: '02. ALTERED STATES' },
+    { url: 'https://raw.githubusercontent.com/WaseemShaik26/Sahir-Qawi-Music/main/03_Instruemtnal.mp3', title: '03. INSTRUMENTAL' },
+    { url: 'https://raw.githubusercontent.com/WaseemShaik26/Sahir-Qawi-Music/main/04_Extra%20Sensory%20Perceptions.mp3', title: '04. ESP' },
+    { url: 'https://raw.githubusercontent.com/WaseemShaik26/Sahir-Qawi-Music/main/05_Spectral%20frequencies%20.mp3', title: '05. SPECTRAL FREQUENCIES' },
+    { url: 'https://raw.githubusercontent.com/WaseemShaik26/Sahir-Qawi-Music/main/06_Subtle%20energies%20.mp3', title: '06. SUBTLE ENERGIES' },
+    { url: 'https://raw.githubusercontent.com/WaseemShaik26/Sahir-Qawi-Music/main/07_Samurai%20Percussion.mp3', title: '07. SAMURAI PERCUSSION' },
+    { url: 'https://raw.githubusercontent.com/WaseemShaik26/Sahir-Qawi-Music/main/08_Shamanic%20trance.mp3', title: '08. SHAMANIC TRANCE' },
+    { url: 'https://raw.githubusercontent.com/WaseemShaik26/Sahir-Qawi-Music/main/09_Esoteric%20song.mp3', title: '09. ESOTERIC SONG' },
+    { url: 'https://raw.githubusercontent.com/WaseemShaik26/Sahir-Qawi-Music/main/10_Ethereal%20Beings.mp3', title: '10. ETHEREAL BEINGS' }
+  ];
+
+  let currentTrackIndex = -1;
+  let isLooping = false;
+  const audio = document.getElementById('main-audio');
+  const playlistDiv = document.getElementById('playlist-container');
+  const loopBtn = document.getElementById('loop-btn');
+
+  function formatTime(seconds) {
+    if (isNaN(seconds)) return "--:--";
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return mins + ":" + (secs < 10 ? '0' : '') + secs;
+  }
+
+  function loadDurations() {
+    tracks.forEach((track, index) => {
+      const tempAudio = new Audio();
+      tempAudio.src = track.url;
+      tempAudio.addEventListener('loadedmetadata', () => {
+        track.duration = formatTime(tempAudio.duration);
+        buildPlaylist();
+      });
+    });
+  }
+
+  function buildPlaylist() {
+    playlistDiv.innerHTML = '';
+    tracks.forEach((track, index) => {
+      const trackEl = document.createElement('div');
+      trackEl.className = 'track' + (index === currentTrackIndex ? ' active' : '');
+      trackEl.innerHTML = `
+        <span>${track.title}</span>
+        <span class="duration-tag">${index === currentTrackIndex ? 'PLAYING' : (track.duration || '...')}</span>
+      `;
+      trackEl.onclick = () => playTrack(index);
+      playlistDiv.appendChild(trackEl);
+    });
+  }
+
+  function masterPlay() {
+    if (currentTrackIndex === -1) {
+      playTrack(0);
+    } else {
+      if (audio.paused) audio.play();
+      else audio.pause();
+    }
+  }
+
+  function playTrack(index) {
+    if (index < 0 || index >= tracks.length) return;
+    currentTrackIndex = index;
+    audio.src = tracks[currentTrackIndex].url;
+    audio.play();
+    buildPlaylist();
+  }
+
+  function nextTrack() {
+    let nextIndex = (currentTrackIndex + 1) % tracks.length;
+    playTrack(nextIndex);
+  }
+
+  function prevTrack() {
+    let prevIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
+    playTrack(prevIndex);
+  }
+
+  function toggleLoop() {
+    isLooping = !isLooping;
+    loopBtn.classList.toggle('loop-active', isLooping);
+  }
+
+  audio.onended = () => {
+    if (isLooping) {
+      audio.currentTime = 0;
+      audio.play();
+    } else {
+      nextTrack();
+    }
+  };
+
+  buildPlaylist();
+  loadDurations();
+</script>
+
+</body>
+</html> add a text button for mobile oyu did to this code and link to this https://waseemshaik26.github.io/Sahir-Qawi-Music/
